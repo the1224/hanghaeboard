@@ -66,12 +66,19 @@
                             <div id="${id}-editarea" class="edit">
                                 <textarea id="${id}-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>
                             </div>
+                            <div class="edit" id="${id}-userarea">
+                                <textarea id="${id}-usertext" class="te-edit" placeholder="  작성자명을 입력하세요." name="" id="" cols="10" rows="1"></textarea>
+                            </div>
+                            <div id="${id}-passwordarea" class="edit">
+                                <textarea id="${id}-password" class="te-edit" placeholder="  비밀번호를 입력하세요." name="" id="" cols="10" rows="1"></textarea>
+                            </div>
                         </div>
                         <!-- 버튼 영역-->
                         <div class="footer">
-                            <button id="${id}-edit" type="button" class="btn btn-secondary" onclick="editPost('${id}')">수정!</button>
-                            <button id="${id}-delete" type="button" class="btn btn-secondary" onclick="deleteOne('${id}')">삭제!</button>
-                            <button id="${id}-submit" type="button" class="btn btn-secondary" onclick="submitEdit('${id}')">등록!</button>
+                            <button id="${id}-edit" type="button" class="btn btn-secondary" onclick="editPost('${id}')">수정</button>
+                            <button id="${id}-delete" type="button" class="btn btn-secondary" onclick="deletePost('${id}')">삭제</button>
+                            <button id="${id}-submit" type="button" class="btn btn-secondary" onclick="submitEdit('${id}')">수정 확인</button>
+                            <button id="${id}-delete" type="button" class="btn btn-secondary" onclick="deleteOne('${id}')">삭제 확인</button>
                         </div>
                     </div>`;
         }
@@ -79,7 +86,7 @@
         // 사용자가 내용을 올바르게 입력하였는지 확인합니다.
         function isValidContents(contents) {
             if (contents == '') {
-                alert('내용 또는 비밀번호를 입력해주세요');
+                alert('모든 칸에 알맞은 값을 입력해주세요');
                 return false;
             }
             if (contents.trim().length > 140) {
@@ -89,36 +96,18 @@
             return true;
         }
 
-        // 익명의 username을 만듭니다.
-        function genRandomName(length) {
-            let result = '';
-            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let charactersLength = characters.length;
-            for (let i = 0; i < length; i++) {
-                let number = Math.random() * charactersLength;
-                let index = Math.floor(number);
-                result += characters.charAt(index);
-            }
-            return result;
-        }
-
 
         // 메모를 생성합니다.
         function writePost() {
             // 1. 작성한 메모를 불러옵니다.
             let contents = $('#contents').val();
+            let username = $('#username').val();
             let password = $('#passwords').val();
 
             // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-            if (isValidContents(contents) == false) {
+            if (isValidContents(contents) == false || isValidContents(password) == false || isValidContents(username) == false) {
                 return;
             }
-            if (isValidContents(password) == false) {
-                return;
-            }
-
-            // 3. genRandomName 함수를 통해 익명의 username을 만듭니다.
-            let username = genRandomName(10);
 
             // 4. 전달할 data JSON으로 만듭니다.
             let data = {'username': username, 'contents': contents, 'password': password};
@@ -141,10 +130,14 @@
             showEdits(id);
             let contents = $(`#${id}-contents`).text().trim();
             $(`#${id}-textarea`).val(contents);
+            let username = $(`#${id}-username`).text().trim();
+            $(`#${id}-usertext`).val(username);
         }
 
         function showEdits(id) {
             $(`#${id}-editarea`).show();
+            $(`#${id}-userarea`).show();
+            $(`#${id}-passwordarea`).show();
             $(`#${id}-submit`).show();
             $(`#${id}-delete`).show();
 
@@ -155,16 +148,17 @@
         // 메모를 수정합니다.
         function submitEdit(id) {
             // 1. 작성 대상 메모의 username과 contents 를 확인합니다.
-            let username = $(`#${id}-username`).text().trim();
+            let username = $(`#${id}-usertext`).val().trim();
             let contents = $(`#${id}-textarea`).val().trim();
+            let password = $(`#${id}-password`).val().trim();
 
             // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-            if (isValidContents(contents) == false) {
+            if (isValidContents(contents) == false || isValidContents(password) == false ||isValidContents(username) == false) {
                 return;
             }
 
             // 3. 전달할 data JSON으로 만듭니다.
-            let data = {'username': username, 'contents': contents};
+            let data = {'username': username, 'contents': contents, 'password': password};
 
             // 4. PUT /api/boards/{id} 에 data를 전달합니다.
             $.ajax({
@@ -178,10 +172,19 @@
                 }
             });
         }
+        function deletePost(id) {
+            $(`#${id}-passwordarea`).show();
+        }
         function deleteOne(id) {
+            let password = $(`#${id}-password`).val().trim();
+            if (isValidContents(password) == false) {
+                return;
+            }
+            let data = {'password': password};
             $.ajax({
                 type: "DELETE",
                 url: `/api/boards/${id}`,
+                data: JSON.stringify(data),
                 success: function (response) {
                     alert('메시지 삭제에 성공하였습니다.');
                     window.location.reload();
@@ -285,7 +288,25 @@
             resize: none;
         }
         textarea.password {
-            width: 250px !important;
+            width: 225px !important;
+            height: 40px;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 16px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: 1;
+            letter-spacing: -0.96px;
+            text-align: left;
+            color: #868e96;
+            border-radius: 5px;
+            background-color: #ffffff;
+            border: none;
+            padding: 10px;
+            resize: none;
+        }
+        textarea.username {
+            width: 225px !important;
             height: 40px;
             font-family: 'Noto Sans KR', sans-serif;
             font-size: 16px;
@@ -424,6 +445,8 @@
     <div class="area-write">
         <textarea class="field" placeholder="공유하고 싶은 소식을 입력하세요." name="contents" th:id="contents" cols="30"
                   rows="10"></textarea>
+        <textarea class="username" placeholder="  작성자명을 입력하세요." name="username" th:id="username" cols="20"
+                  rows="2"></textarea>
         <textarea class="password" placeholder="  비밀번호를 입력하세요." name="passwords" th:id="passwords" cols="20"
                   rows="2"></textarea>
         <p><button type="button" class="btn btn-secondary" onclick="writePost()">작성!</button></p>
