@@ -6,8 +6,10 @@ import com.sparta.hanghaememo.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +33,28 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
+        if (board.getPassword().equals(requestDto.getPassword())){
         board.update(requestDto);
-        return board.getId();
+        return board.getId();}
+        else {
+            return 999999L;
+        }
     }
 
     @Transactional
-    public Long deleteBoard(Long id) {
+    public boolean deleteBoard(Long id, String password) {
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        if (board.getPassword().equals(password)){
         boardRepository.deleteById(id);
-        return id;
+            System.out.println("비밀번호 일치");
+        return true;
+        }
+        else {
+            System.out.println("비밀번호 불일치");
+            return false;
+        }
     }
+
 }
