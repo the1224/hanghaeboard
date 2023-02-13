@@ -3,10 +3,12 @@ package com.sparta.hanghaememo.controller;
 import com.sparta.hanghaememo.dto.BoardRequestDto;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.service.BoardService;
+import com.sparta.hanghaememo.dto.BoardResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -19,16 +21,16 @@ public class BoardController {
     }
 
     @PostMapping("/api/boards")
-    public Board createBoard(@RequestBody BoardRequestDto requestDto) {
-        return boardService.createBoard(requestDto);
+    public BoardResponseDto createBoard(@RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
+        return boardService.createBoard(requestDto, request);
     }
 
-    @GetMapping("/api/boards")
+     @GetMapping("/api/boards")
     public List<Board> getBoards() {
         return boardService.getBoards();
     }
-    @PutMapping("/api/boards/{id}")
-    public Long updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
+/*     @PutMapping("/api/boards/{id}")
+    public Board updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
         return boardService.update(id, requestDto);
     }
 
@@ -37,5 +39,5 @@ public class BoardController {
         String password = requestDto.getPassword();
         return boardService.deleteBoard(id, password);
     }
-
+*/
 }

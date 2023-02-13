@@ -1,6 +1,7 @@
 package com.sparta.hanghaememo.entity;
 
 import com.sparta.hanghaememo.dto.BoardRequestDto;
+import com.sparta.hanghaememo.repository.UserRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,36 +9,30 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Board extends Timestamped{
+public class Board extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private String password;
+    private Long userId;
 
     @Column(nullable = false)
     private String contents;
 
-    public Board(String username, String password, String contents) {
-        this.username = username;
-        this.password = password;
-        this.contents = contents;
-    }
+    @Column(nullable = false)
+    private String username;
 
-    public Board(BoardRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+
+    public Board(BoardRequestDto requestDto, Long userId, String username) {
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
+        this.userId = userId;
+        this.username = username;
     }
 
-    public void update(BoardRequestDto boardRequestDto) {
-        this.username = boardRequestDto.getUsername();
+    public void update(BoardRequestDto boardRequestDto, Long userId) {
         this.contents = boardRequestDto.getContents();
-        this.password = boardRequestDto.getPassword();
+        this.userId = userId;
     }
 
 }
