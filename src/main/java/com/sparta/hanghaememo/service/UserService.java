@@ -49,7 +49,7 @@ public class UserService {
         }
 
         for (int i=0; i<password.length(); i++){
-            if ((username.charAt(i) >='0' && username.charAt(i) <='9') || (username.charAt(i) >='a' && username.charAt(i) <='z') ||
+            if ((password.charAt(i) >='0' && password.charAt(i) <='9') || (password.charAt(i) >='a' && password.charAt(i) <='z') ||
                     (password.charAt(i) >='A' && password.charAt(i) <='Z')){}
             else {
                 throw new IllegalArgumentException("password는  알파벳 대소문자(a~z, A~Z), 숫자(0~9)`로 구성되어야 합니다.");

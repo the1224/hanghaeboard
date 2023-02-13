@@ -4,9 +4,11 @@ import com.sparta.hanghaememo.dto.BoardRequestDto;
 import com.sparta.hanghaememo.repository.UserRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Board extends Timestamped {
