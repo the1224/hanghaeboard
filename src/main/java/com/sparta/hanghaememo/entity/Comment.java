@@ -1,18 +1,20 @@
 package com.sparta.hanghaememo.entity;
 
 import com.sparta.hanghaememo.dto.BoardRequestDto;
+import com.sparta.hanghaememo.dto.CommentRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-public class Board extends Timestamped {
+public class Comment extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -24,15 +26,18 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
+    private Long boardId;
 
-    public Board(BoardRequestDto requestDto, User user) {
+    public Comment(CommentRequestDto requestDto, User user, Long id) {
         this.contents = requestDto.getContents();
         this.userId = user.getId();
+        this.boardId = id;
         this.username = user.getUsername();
     }
 
-    public void update(BoardRequestDto boardRequestDto, Long userId) {
-        this.contents = boardRequestDto.getContents();
+    public void update(CommentRequestDto commentRequestDto, Long userId) {
+        this.contents = commentRequestDto.getContents();
         this.userId = userId;
     }
 

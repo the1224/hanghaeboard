@@ -1,7 +1,10 @@
 package com.sparta.hanghaememo.controller;
 
 import com.sparta.hanghaememo.dto.BoardRequestDto;
+import com.sparta.hanghaememo.dto.CommentRequestDto;
+import com.sparta.hanghaememo.dto.CommentResponseDto;
 import com.sparta.hanghaememo.entity.Board;
+import com.sparta.hanghaememo.entity.Comment;
 import com.sparta.hanghaememo.service.BoardService;
 import com.sparta.hanghaememo.dto.BoardResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +34,31 @@ public class BoardController {
     }
      @PutMapping("/api/boards/{id}")
     public BoardResponseDto updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
-        return boardService.update(id, requestDto, request);
+        return boardService.updateBoard(id, requestDto, request);
     }
 
     @DeleteMapping("/api/boards/{id}")
     public String deleteBoard(@PathVariable Long id, HttpServletRequest request) {
         return boardService.deleteBoard(id, request);
+    }
+
+   @GetMapping("/api/boards/{id}")
+    public List<Comment> getComments(@PathVariable Long id) {
+        return boardService.getComments();
+    }
+
+    @PostMapping("/api/boards/{id}")
+    public CommentResponseDto createComment(@RequestBody CommentRequestDto requestDto, @PathVariable Long id, HttpServletRequest request) {
+        return boardService.createComment(requestDto, id, request);
+    }
+    @PutMapping("/api/boards/{id}/{commentId}")
+    public CommentResponseDto updateComment(@PathVariable Long id, @PathVariable Long commentId, @RequestBody CommentRequestDto requestDto, HttpServletRequest request) {
+        return boardService.updateComment(commentId, requestDto, request);
+    }
+
+    @DeleteMapping("/api/boards/{id}/{commentId}")
+    public String deleteComment(@PathVariable Long id, @PathVariable Long commentId, HttpServletRequest request) {
+        return boardService.deleteComment(commentId, request);
     }
 
 }
