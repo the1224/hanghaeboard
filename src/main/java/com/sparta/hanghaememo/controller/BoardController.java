@@ -5,9 +5,11 @@ import com.sparta.hanghaememo.dto.CommentRequestDto;
 import com.sparta.hanghaememo.dto.CommentResponseDto;
 import com.sparta.hanghaememo.entity.Board;
 import com.sparta.hanghaememo.entity.Comment;
+import com.sparta.hanghaememo.security.UserDetailsImpl;
 import com.sparta.hanghaememo.service.BoardService;
 import com.sparta.hanghaememo.dto.BoardResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,8 +26,8 @@ public class BoardController {
     }
 
     @PostMapping("/api/boards")
-    public BoardResponseDto createBoard(@RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
-        return boardService.createBoard(requestDto, request);
+    public BoardResponseDto createBoard(@RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.createBoard(requestDto, userDetails.getUser());
     }
 
      @GetMapping("/api/boards")
@@ -33,13 +35,13 @@ public class BoardController {
         return boardService.getBoards();
     }
      @PutMapping("/api/boards/{id}")
-    public BoardResponseDto updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
-        return boardService.updateBoard(id, requestDto, request);
+    public BoardResponseDto updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.updateBoard(id, requestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public String deleteBoard(@PathVariable Long id, HttpServletRequest request) {
-        return boardService.deleteBoard(id, request);
+    public String deleteBoard(@PathVariable Long id,  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.deleteBoard(id, userDetails.getUser());
     }
 
    @GetMapping("/api/boards/{id}")

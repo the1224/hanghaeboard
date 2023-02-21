@@ -1,12 +1,17 @@
 package com.sparta.hanghaememo.jwt;
 
+
 import com.sparta.hanghaememo.entity.UserRoleEnum;
+import com.sparta.hanghaememo.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +35,8 @@ public class JwtUtil {
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    private final UserDetailsServiceImpl userDetailsService;
 
     @PostConstruct
     public void init() {
@@ -82,4 +89,9 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    // 인증 객체 생성
+    public Authentication createAuthentication(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
 }
