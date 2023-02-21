@@ -16,7 +16,6 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -76,7 +75,7 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
@@ -92,7 +91,7 @@ public class BoardService {
                 return new BoardResponseDto(board);
             }  //해당 사용자가 작성한 글인지 확인 (토큰의 사용자 이름과 게시글 작성자의 이름 비교)
             else {
-                throw new IllegalArgumentException("사용자가 작성한 글이 아닙니다.");
+                throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
             }
         }
         else {
